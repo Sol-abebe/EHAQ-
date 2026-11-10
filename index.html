@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethiopian National Health Care Quality Strategy (2016-2020)</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ethiopia: {
+                            green: '#009A44',
+                            yellow: '#FED100',
+                            red: '#E4002B',
+                            blue: '#0F2C59',
+                            teal: '#00A896',
+                            gold: '#D4AF37'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js (3D Graphics) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Chart.js (Data Visualization) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #090d16;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: rgba(18, 26, 43, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-nav {
+            background: rgba(13, 19, 33, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-pill:hover, .glass-pill.active {
+            background: rgba(0, 154, 68, 0.25);
+            border-color: rgba(0, 154, 68, 0.6);
+            box-shadow: 0 0 15px rgba(0, 154, 68, 0.3);
+        }
+
+        /* 3D Card Hover Effects */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .card-3d {
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
+            transform-style: preserve-3d;
+        }
+
+        .card-3d:hover {
+            transform: translateY(-8px) rotateX(4deg) rotateY(-4deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 168, 150, 0.3);
+        }
+
+        /* Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1321;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #009A44;
+        }
+
+        /* Glowing text & Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #009A44 0%, #FED100 50%, #00A896 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-red {
+            background: linear-gradient(135deg, #FED100 0%, #E4002B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Animation utilities */
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Table Styling */
+        .indicator-table th, .indicator-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .indicator-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 3D Canvas Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-nav px-4 lg:px-8 py-3 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('executive')">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-ethiopia-green via-ethiopia-yellow to-ethiopia-red flex items-center justify-center p-[2px] shadow-lg shadow-green-900/30">
+                    <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-star text-ethiopia-yellow text-sm"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-wide text-white leading-tight">
+                        Ethiopian Health Quality <span class="text-ethiopia-yellow">Strategy</span>
+                    </h1>
+                    <p class="text-xs text-gray-400 font-medium">Federal Democratic Republic of Ethiopia Ministry of Health • 2016–2020</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex flex-wrap justify-center gap-1.5 md:gap-2">
+                <button onclick="switchTab('executive')" id="nav-executive" class="glass-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-compass"></i> Overview & Aim
+                </button>
+                <button onclick="switchTab('current-state')" id="nav-current-state" class="glass-pill px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie"></i> Current State
+                </button>
+                <button onclick="switchTab('focus-areas')" id="nav-focus-areas" class="glass-pill px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye"></i> Strategic Pillars
+                </button>
+                <button onclick="switchTab('commitments')" id="nav-commitments" class="glass-pill px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-road"></i> Roadmap & Next Steps
+                </button>
+                <button onclick="switchTab('framework')" id="nav-framework" class="glass-pill px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> Indicators Hub
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-8">
+
+        <!-- ================= SECTION 1: EXECUTIVE SUMMARY & AIM ================= -->
+        <section id="tab-executive" class="tab-content animate-fade-in space-y-8">
+            
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl p-8 lg:p-12 overflow-hidden glass-card border border-white/10 flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-ethiopia-green/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-ethiopia-teal/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="space-y-4 max-w-2xl z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ethiopia-green/20 border border-ethiopia-green/40 text-ethiopia-yellow text-xs font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-flag"></i> National Transformation Vision
+                    </div>
+                    <h2 class="text-3xl lg:text-5xl font-black text-white leading-tight">
+                        Transforming the Quality of <span class="text-gradient">Health Care</span> in Ethiopia
+                    </h2>
+                    <p class="text-gray-300 text-sm lg:text-base leading-relaxed">
+                        To consistently ensure and improve clinical care outcomes, patient safety, and patient-centeredness while maximizing equitable access across all segments of the Ethiopian population by 2020.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-4">
+                        <button onclick="switchTab('focus-areas')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-ethiopia-green to-ethiopia-teal text-white font-bold text-sm shadow-lg shadow-green-900/40 hover:opacity-90 transition flex items-center gap-2">
+                            Explore Strategic Pillars <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="switchTab('framework')" class="px-6 py-3 rounded-xl bg-white/5 border border-white/15 text-gray-200 font-semibold text-sm hover:bg-white/10 transition flex items-center gap-2">
+                            View Indicator Matrix
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive 3D Sphere Display Widget -->
+                <div class="w-full lg:w-80 h-64 relative flex flex-col items-center justify-center glass-card rounded-2xl border border-white/10 p-4">
+                    <div class="absolute top-3 left-3 text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-ethiopia-yellow animate-ping"></span> Core Aims Focus
+                    </div>
+                    <div id="hero-3d-widget" class="w-full h-full"></div>
+                    <p class="text-[11px] text-gray-400 text-center">Interactive 3D Quality Core • Drag to Rotate</p>
+                </div>
+            </div>
+
+            <!-- Definition of Quality in Ethiopia -->
+            <div class="glass-card rounded-2xl p-6 lg:p-8 border border-white/10 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 rounded-xl bg-ethiopia-gold/10 text-ethiopia-yellow">
+                        <i class="fa-solid fa-quote-left text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Defining Quality in Ethiopia</h3>
+                        <p class="text-xs text-gray-400">Health Sector Transformation Plan (HSTP) Quality Alignment</p>
+                    </div>
+                </div>
+                <blockquote class="text-base lg:text-lg italic text-gray-200 border-l-4 border-ethiopia-yellow pl-4 py-1 bg-white/5 rounded-r-lg">
+                    "Comprehensive care that is measurably safe, effective, patient-centered, and uniformly delivered in a timely way that is affordable to the Ethiopian population and appropriately utilizes resources and services efficiently."
+                </blockquote>
+            </div>
+
+            <!-- 5 Priority Public Health Areas -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">5 Strategic Public Health Priorities</h3>
+                        <p class="text-sm text-gray-400">High-impact clinical target domains identified in the Strategy</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 perspective-1000">
+                    
+                    <!-- Card 1 -->
+                    <div class="card-3d glass-card rounded-2xl p-5 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-baby-carriage"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">Maternal & Child Health</h4>
+                            <p class="text-xs text-gray-400 mt-1">Reducing maternal & neonatal mortality (asphyxia, sepsis, postpartum hemorrhage).</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded w-max">Priority #1</span>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="card-3d glass-card rounded-2xl p-5 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-bowl-food"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">Child Malnutrition</h4>
+                            <p class="text-xs text-gray-400 mt-1">Preventing & managing severe acute malnutrition (SAM) affecting under-5 children.</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded w-max">Priority #2</span>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="card-3d glass-card rounded-2xl p-5 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-virus-slash"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">Communicable Diseases</h4>
+                            <p class="text-xs text-gray-400 mt-1">Accelerating response against HIV (Option B+), TB/MDR-TB, and Malaria.</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded w-max">Priority #3</span>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="card-3d glass-card rounded-2xl p-5 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">Chronic NCDs</h4>
+                            <p class="text-xs text-gray-400 mt-1">Prevention & care for Diabetes, Cancer, Cardiovascular, Mental Health & Respiratory.</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded w-max">Priority #4</span>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="card-3d glass-card rounded-2xl p-5 border border-white/10 flex flex-col justify-between space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-user-nurse"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-base">Surgical Services</h4>
+                            <p class="text-xs text-gray-400 mt-1">Improving timeliness, safety, and reliability of emergency & surgical care.</p>
+                        </div>
+                        <span class="text-[11px] font-semibold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded w-max">Priority #5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Juran's Quality Trilogy Core Principles -->
+            <div class="glass-card rounded-2xl p-6 lg:p-8 border border-white/10 space-y-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-white">Three Core Elements of Quality</h3>
+                    <p class="text-sm text-gray-400">Integrated Juran Quality Trilogy Framework used in the Ethiopian Strategy</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                        <div class="flex items-center gap-2 text-ethiopia-yellow font-bold text-lg">
+                            <i class="fa-solid fa-compass-drafting"></i> 1. Quality Planning
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Brings systems thinking to high-level governance. Designs health structures that deliver the right care at the right time, allocating resources based on measured population health needs.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                        <div class="flex items-center gap-2 text-ethiopia-teal font-bold text-lg">
+                            <i class="fa-solid fa-arrows-spin"></i> 2. Quality Improvement
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Continuous iterative testing (PDSA cycles & Kaizen) to achieve ambitious aims. Combines frontline Kaizen "engine" with Model for Improvement structure for rapid scale-up.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                        <div class="flex items-center gap-2 text-ethiopia-green font-bold text-lg">
+                            <i class="fa-solid fa-shield-halved"></i> 3. Quality Control
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Normative assurance process enforcing standards, clinical audits, FMHACA regulations, and EQA to maintain performance and eliminate avoidable patient harm.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: CURRENT STATE ANALYSIS ================= -->
+        <section id="tab-current-state" class="tab-content hidden animate-fade-in space-y-8">
+            <div class="border-b border-white/10 pb-4">
+                <h2 class="text-3xl font-extrabold text-white">Current State Analysis</h2>
+                <p class="text-sm text-gray-400">Baseline evaluation of population health, leadership functionality, and data ecosystems</p>
+            </div>
+
+            <!-- Health Trends Data & Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Interactive Chart -->
+                <div class="lg:col-span-7 glass-card rounded-2xl p-6 border border-white/10 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Under-Five Mortality Rate Reduction</h3>
+                            <p class="text-xs text-gray-400">Historical trend towards MDG 4 achievement (Deaths per 1,000 live births)</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded bg-ethiopia-green/20 text-ethiopia-yellow text-xs font-bold">MDG 4 Achieved</span>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="chart-u5-mortality"></canvas>
+                    </div>
+                    <p class="text-xs text-gray-400 italic">Data Source: Mini DHS & Strategy Baseline Analytics. Shows sharp reduction from 204 to 68.</p>
+                </div>
+
+                <!-- Strategic Gaps Summary -->
+                <div class="lg:col-span-5 glass-card rounded-2xl p-6 border border-white/10 flex flex-col justify-between space-y-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Key Current System Challenges</h3>
+                        <p class="text-xs text-gray-400">Critical bottlenecks identified during WHO diagnostic phase</p>
+                    </div>
+                    <ul class="space-y-3 text-xs text-gray-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                            <span><strong>Neonatal Mortality Lag:</strong> Slow reduction rate in neonatal deaths compared to overall under-five mortality gains.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                            <span><strong>Inconsistent Clinical Standards:</strong> Disconnect between FMHACA regulatory standards and facility capacity to comply.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                            <span><strong>Data Feedback Disconnect:</strong> HMIS data reporting lacks real-time downstream feedback loops to primary health facilities.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5"></i>
+                            <span><strong>Supply & Maintenance Gaps:</strong> Frequent stock-outs of critical reagents and unmaintained medical equipment.</span>
+                        </li>
+                    </ul>
+                    <div class="p-3 bg-white/5 rounded-xl border border-white/10 text-xs text-ethiopia-yellow">
+                        <i class="fa-solid fa-circle-info"></i> Strategic goal: Bridge these baseline gaps by 2020 via standardized Ql structures.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health System Functional Hierarchy Matrix -->
+            <div class="glass-card rounded-2xl p-6 border border-white/10 space-y-4">
+                <h3 class="text-xl font-bold text-white">System Level Dynamics & Future State Targets</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300 border-collapse">
+                        <thead>
+                            <tr class="bg-white/10 text-white font-semibold">
+                                <th class="p-3 rounded-tl-lg">Level</th>
+                                <th class="p-3">Current State Assessment</th>
+                                <th class="p-3">Key Levers / Mechanisms</th>
+                                <th class="p-3 rounded-tr-lg">Targeted Future State (2020)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr>
+                                <td class="p-3 font-bold text-ethiopia-yellow">National (FMoH / Agencies)</td>
+                                <td class="p-3">Fragmented quality tools; inconsistent standard enforcement across public vs private sectors.</td>
+                                <td class="p-3">Policy development, harmonized standards, FMHACA licensing, national EHAQ scale-up.</td>
+                                <td class="p-3 text-emerald-400">Unified Quality Directorate, harmonized standards, zero critical stock-outs.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-ethiopia-teal">Regional / Zonal / Woreda</td>
+                                <td class="p-3">Variable leadership engagement; limited mentoring capability & budget constraints.</td>
+                                <td class="p-3">Resource allocation, clinical audits, supportive supervision as QI mentoring mechanism.</td>
+                                <td class="p-3 text-emerald-400">Dedicated QI teams, claims data utilization, active two-way data feedback loops.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-sky-400">Facility Level</td>
+                                <td class="p-3">Staff attrition, basic skill gaps, low physician engagement in routine QA/QI processes.</td>
+                                <td class="p-3">KPI monitoring, CASH initiative, EHAQ peer-learning networks, patient feedback systems.</td>
+                                <td class="p-3 text-emerald-400">Institutionalized QI teams, skill labs, high staff joy in work, empanelment readiness.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-purple-400">Community & Patients</td>
+                                <td class="p-3">Inconsistent provider-patient trust; underutilized community accountability mechanisms.</td>
+                                <td class="p-3">Health Development Army (HDA), community dialogue forums, patient complaints desks.</td>
+                                <td class="p-3 text-emerald-400">HDA operating as frontline QI teams, Community Endorsement Groups, Patient Rights Charter active.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: STRATEGIC FOCUS AREAS (PILLARS) ================= -->
+        <section id="tab-focus-areas" class="tab-content hidden animate-fade-in space-y-8">
+            <div class="border-b border-white/10 pb-4">
+                <h2 class="text-3xl font-extrabold text-white">4 Strategic Focus Areas</h2>
+                <p class="text-sm text-gray-400">The core pillars driving national healthcare quality transformation</p>
+            </div>
+
+            <!-- Interactive Pillar Selector Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="selectPillar(1)" id="pillar-btn-1" class="glass-card p-5 rounded-2xl text-left border-l-4 border-ethiopia-green transition-all hover:bg-white/10 active-pillar">
+                    <span class="text-xs font-bold text-ethiopia-green uppercase tracking-wider">Pillar 1</span>
+                    <h3 class="text-lg font-bold text-white mt-1">DEVELOP</h3>
+                    <p class="text-xs text-gray-400 mt-2">Integrated approach to Quality Planning, QI & Control</p>
+                </button>
+
+                <button onclick="selectPillar(2)" id="pillar-btn-2" class="glass-card p-5 rounded-2xl text-left border-l-4 border-ethiopia-yellow opacity-70 transition-all hover:bg-white/10">
+                    <span class="text-xs font-bold text-ethiopia-yellow uppercase tracking-wider">Pillar 2</span>
+                    <h3 class="text-lg font-bold text-white mt-1">ACTIVATE</h3>
+                    <p class="text-xs text-gray-400 mt-2">Motivate workforce, build leaders & empower communities</p>
+                </button>
+
+                <button onclick="selectPillar(3)" id="pillar-btn-3" class="glass-card p-5 rounded-2xl text-left border-l-4 border-sky-400 opacity-70 transition-all hover:bg-white/10">
+                    <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">Pillar 3</span>
+                    <h3 class="text-lg font-bold text-white mt-1">DRIVE</h3>
+                    <p class="text-xs text-gray-400 mt-2">Link Universal Health Coverage & Insurance to Quality</p>
+                </button>
+
+                <button onclick="selectPillar(4)" id="pillar-btn-4" class="glass-card p-5 rounded-2xl text-left border-l-4 border-purple-400 opacity-70 transition-all hover:bg-white/10">
+                    <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Pillar 4</span>
+                    <h3 class="text-lg font-bold text-white mt-1">SUPPORT</h3>
+                    <p class="text-xs text-gray-400 mt-2">Robust data systems & transparent feedback loops</p>
+                </button>
+            </div>
+
+            <!-- Pillar Detail View Container -->
+            <div id="pillar-detail-container" class="glass-card rounded-2xl p-6 lg:p-8 border border-white/10 space-y-6">
+                <!-- Dynamic Content Injected Here by JS -->
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: COMMITMENTS & ROADMAP ================= -->
+        <section id="tab-commitments" class="tab-content hidden animate-fade-in space-y-8">
+            <div class="border-b border-white/10 pb-4">
+                <h2 class="text-3xl font-extrabold text-white">Execution Commitments & Roadmap</h2>
+                <p class="text-sm text-gray-400">Institutional structural shifts and 5-year implementation timeline</p>
+            </div>
+
+            <!-- 3 Infrastructure Commitments -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-ethiopia-green/20 text-ethiopia-yellow flex items-center justify-center text-xl font-bold">
+                        1
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Formal Quality Directorate</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Establish a dedicated FMoH Quality Unit (Directorate equivalent) supported by a multi-disciplinary Quality Steering Committee to oversee planning, QI, and control nationwide.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-ethiopia-teal/20 text-ethiopia-teal flex items-center justify-center text-xl font-bold">
+                        2
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Quality Champions Network</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Capacitate dedicated quality leads across all FMoH Directorates, FMHACA, PFSA, EHIA, professional associations, and Regional Core Processes as trained quality experts.
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Facility & Community QI Units</h3>
+                    <p class="text-xs text-gray-300 leading-relaxed">
+                        Institute functional Quality Teams within all public and private health facilities and transform the Health Development Army (HDA) into community-level QI teams.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 5-Year Implementation Roadmap Timeline -->
+            <div class="glass-card rounded-2xl p-6 lg:p-8 border border-white/10 space-y-6">
+                <h3 class="text-xl font-bold text-white">5-Year Strategic Implementation Timeline (2016–2020)</h3>
+
+                <div class="relative border-l-2 border-ethiopia-green/40 ml-4 pl-6 space-y-8">
+                    
+                    <!-- Short Term -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-ethiopia-yellow border-4 border-slate-900"></div>
+                        <div class="space-y-1">
+                            <span class="text-xs font-extrabold text-ethiopia-yellow tracking-wider uppercase">Short-Term Phase (Years 1–2)</span>
+                            <h4 class="text-base font-bold text-white">Foundations & Standards Harmonization</h4>
+                            <p class="text-xs text-gray-300 leading-relaxed max-w-3xl">
+                                • Refine NQS & ratify national implementation roadmap.<br>
+                                • Harmonize FMoH/MSD and FMHACA hospital regulatory standards.<br>
+                                • Formally establish Quality Directorate & launch annual Quality Summits.<br>
+                                • Draft Patient Rights Charter & launch quality guidelines for EHIA insurance empanelment.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Medium Term -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-ethiopia-teal border-4 border-slate-900"></div>
+                        <div class="space-y-1">
+                            <span class="text-xs font-extrabold text-ethiopia-teal tracking-wider uppercase">Medium-Term Phase (Years 2–4)</span>
+                            <h4 class="text-base font-bold text-white">Enforcement, Insurance Linkage & Scale-Up</h4>
+                            <p class="text-xs text-gray-300 leading-relaxed max-w-3xl">
+                                • Full enforcement of FMHACA standards & WHO benchmark guidelines.<br>
+                                • Roll out quality-based performance agreements for insurance empanelment.<br>
+                                • Expand EHAQ network beyond hospitals to primary health units & private facilities.<br>
+                                • Institutionalize local level data utilization & staff satisfaction initiatives.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Long Term -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-ethiopia-green border-4 border-slate-900"></div>
+                        <div class="space-y-1">
+                            <span class="text-xs font-extrabold text-ethiopia-green tracking-wider uppercase">Long-Term Phase (Years 4–5)</span>
+                            <h4 class="text-base font-bold text-white">Sustainability & System Transformation</h4>
+                            <p class="text-xs text-gray-300 leading-relaxed max-w-3xl">
+                                • Institutionalize continuous Quality Planning, QI, and Quality Control across all levels.<br>
+                                • Fully activate Community Endorsement Groups nationwide.<br>
+                                • Integrate insurance claims data analytics to drive system-wide clinical improvement.<br>
+                                • Secure lower-middle-income country baseline health outcomes.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 5: QUALITY INDICATOR FRAMEWORK ================= -->
+        <section id="tab-framework" class="tab-content hidden animate-fade-in space-y-8">
+            <div class="border-b border-white/10 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white">Quality Indicator Framework Hub</h2>
+                    <p class="text-sm text-gray-400">Balanced Scorecard & OECD aligned national measurement matrix</p>
+                </div>
+                
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2" id="indicator-filters">
+                    <button onclick="filterIndicators('all')" class="ind-filter-btn active-filter px-3 py-1.5 rounded-lg text-xs font-semibold bg-ethiopia-green text-white">All Indicators</button>
+                    <button onclick="filterIndicators('A1')" class="ind-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-gray-300 hover:bg-white/10">A1: Quality</button>
+                    <button onclick="filterIndicators('A2')" class="ind-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-gray-300 hover:bg-white/10">A2: Access</button>
+                    <button onclick="filterIndicators('B')" class="ind-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-gray-300 hover:bg-white/10">B: Inputs</button>
+                    <button onclick="filterIndicators('C')" class="ind-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-gray-300 hover:bg-white/10">C: Outcomes</button>
+                    <button onclick="filterIndicators('Asp')" class="ind-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">Aspirational</button>
+                </div>
+            </div>
+
+            <!-- Indicator Search & Count Summary -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 glass-card p-4 rounded-xl border border-white/10">
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-gray-400"></i>
+                    <input type="text" id="indicator-search" oninput="searchIndicators()" placeholder="Search indicators..." class="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-ethiopia-green">
+                </div>
+                <div class="text-xs text-gray-400">
+                    Showing <span id="indicator-count" class="font-bold text-white">0</span> indicators
+                </div>
+            </div>
+
+            <!-- Indicator Data Table -->
+            <div class="glass-card rounded-2xl border border-white/10 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300 indicator-table">
+                        <thead class="bg-white/10 text-white font-semibold">
+                            <tr>
+                                <th class="w-20">Code</th>
+                                <th class="w-40">Framework Domain</th>
+                                <th>Indicator Name</th>
+                                <th class="w-36">Care Stage / Focus</th>
+                                <th class="w-32">Primary Source</th>
+                            </tr>
+                        </thead>
+                        <tbody id="indicator-table-body">
+                            <!-- Dynamic Content Loaded by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-nav border-t border-white/10 py-6 px-4 lg:px-8 mt-12 text-center text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <p class="font-semibold text-gray-300">Federal Democratic Republic of Ethiopia Ministry of Health</p>
+                <p>National Health Care Quality Strategy (2016–2020) Digital Visual Interface</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="hover:text-ethiopia-yellow cursor-pointer" onclick="switchTab('executive')">Overview</span>
+                <span>•</span>
+                <span class="hover:text-ethiopia-yellow cursor-pointer" onclick="switchTab('focus-areas')">Pillars</span>
+                <span>•</span>
+                <span class="hover:text-ethiopia-yellow cursor-pointer" onclick="switchTab('framework')">Indicators</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        /* ================= INDICATOR DATA MATRIX ================= */
+        const indicatorData = [
+            // A1: Health Service Quality
+            { code: 'A1', domain: 'Health Service Quality', name: '% of health facilities providing all BEMONC signal functions', stage: 'Keep Healthy / MCH', source: 'SPA / HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of district hospitals providing all CEMONC signal functions', stage: 'Keep Healthy / MCH', source: 'HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of women having at least 4 ANC visits', stage: 'Keep Healthy / MCH', source: 'HMIS / EDHS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of newborns breastfeeding within 1 hour of birth', stage: 'Keep Healthy / MCH', source: 'EDHS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% deliveries attended by skilled health personnel', stage: 'Safety / MCH', source: 'HMIS / EDHS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of newborns receiving clean cord care (CHX 7.1% applied)', stage: 'Safety / Newborn', source: 'HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: 'Customer Satisfaction Index & Patient Feedback Rate', stage: 'Patient-Centeredness', source: 'Facility Survey' },
+            { code: 'A1', domain: 'Health Service Quality', name: 'Proportion of emergency patients triaged in < 5 minutes', stage: 'Patient-Centeredness', source: 'Hospital KPIs' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of asphyxiated newborns successfully resuscitated', stage: 'Cure / Newborn', source: 'HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% of HIV+ pregnant women receiving Option B+ ARV prophylaxis', stage: 'Communicable', source: 'HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: 'TB case detection rate and cure rate for confirmed cases', stage: 'Communicable', source: 'HMIS' },
+            { code: 'A1', domain: 'Health Service Quality', name: '% ART patients with undetectable viral load at 12 months', stage: 'Communicable', source: 'HMIS / EPHI' },
+            
+            // A2: Access to System
+            { code: 'A2', domain: 'Access to System', name: 'Potential Primary Health Care Coverage (%)', stage: 'Coverage', source: 'HMIS' },
+            { code: 'A2', domain: 'Access to System', name: '% of households enrolled in Community-Based Health Insurance (CBHI)', stage: 'Enrollment', source: 'EHIA' },
+            { code: 'A2', domain: 'Access to System', name: 'Outpatient attendance per capita & Bed Occupancy Rate', stage: 'Utilization', source: 'HMIS' },
+            { code: 'A2', domain: 'Access to System', name: 'Proportion of Woredas with >= 80% Pentavalent-3 coverage', stage: 'Equity / Distribution', source: 'HMIS' },
+
+            // B: Inputs
+            { code: 'B', domain: 'Health System Inputs', name: 'Proportion of health budget utilization to allocation', stage: 'Finance', source: 'FMoH Finance' },
+            { code: 'B', domain: 'Health System Inputs', name: 'Health staff to population ratio by region & skill mix', stage: 'Health Workforce', source: 'HRIS' },
+            { code: 'B', domain: 'Health System Inputs', name: '% of births/deaths registered at facility via Civil Registration', stage: 'Information', source: 'Vital Stat / HMIS' },
+            { code: 'B', domain: 'Health System Inputs', name: 'Geographic availability of essential NCD drugs & reagents', stage: 'Products / Tech', source: 'PFSA' },
+
+            // C: Outcomes
+            { code: 'C', domain: 'Health Outcomes', name: 'Maternal Mortality Ratio (MMR) & Institutional MMR', stage: 'Health Status', source: 'EDHS / Vital Stat' },
+            { code: 'C', domain: 'Health Outcomes', name: 'Neonatal Mortality Rate (NMR) & Stillborn Rate', stage: 'Health Status', source: 'EDHS' },
+            { code: 'C', domain: 'Health Outcomes', name: 'Treatment outcome for Severe Acute Malnutrition (SAM)', stage: 'Nutrition', source: 'HMIS' },
+            { code: 'C', domain: 'Health Outcomes', name: 'Malaria mortality rate per 100,000 population at risk', stage: 'Communicable', source: 'HMIS' },
+
+            // Aspirational Indicators
+            { code: 'Asp', domain: 'Aspirational Indicator', name: 'Amputation rate among diabetic patients', stage: 'NCD Safety', source: 'Aspirational' },
+            { code: 'Asp', domain: 'Aspirational Indicator', name: 'Patient-reported experience measures (PREMs) in Primary Care', stage: 'Patient-Centeredness', source: 'Aspirational' },
+            { code: 'Asp', domain: 'Aspirational Indicator', name: 'Avoidable hospital readmissions & surgical complication rates', stage: 'Safety', source: 'Aspirational' },
+            { code: 'Asp', domain: 'Aspirational Indicator', name: 'Geographic distribution ratio of specialists/doctors per 10,000', stage: 'Equity Access', source: 'Aspirational' },
+            { code: 'Asp', domain: 'Aspirational Indicator', name: '% of healthcare leaders conducting weekly routine QI Gemba rounds', stage: 'Leadership', source: 'Aspirational' }
+        ];
+
+        /* ================= PILLAR DETAILS DATA ================= */
+        const pillarData = {
+            1: {
+                title: "DEVELOP: Integrated Approach to Quality",
+                border: "border-ethiopia-green",
+                badge: "bg-ethiopia-green/20 text-ethiopia-yellow",
+                subtitle: "Harmonize standards, scale quality improvement initiatives, and strengthen planning.",
+                interventions: [
+                    "Refine & institutionalize quality control mechanisms to enforce minimum standards.",
+                    "Harmonize hospital standards between FMoH Medical Services Directorate (MSD) & FMHACA.",
+                    "Expand Ethiopian Hospitals Alliance for Quality (EHAQ) nationwide to include Health Centers & Private sector.",
+                    "Launch collaborative QI initiatives for priority public health areas (MCH, SAM, NCDs, Surgery).",
+                    "Strengthen quality planning for supply chain to mitigate drug & reagent stock-outs."
+                ],
+                owners: "Medical Services Directorate (MSD), FMHACA, PFSA, Policy Planning Directorate"
+            },
+            2: {
+                title: "ACTIVATE: Key Constituencies & Workforce",
+                border: "border-ethiopia-yellow",
+                badge: "bg-ethiopia-yellow/20 text-ethiopia-yellow",
+                subtitle: "Motivate health workforce, cultivate leadership, and activate community demand.",
+                interventions: [
+                    "Develop workforce motivation programs, protecting provider rights and promoting joy in work.",
+                    "Embed Quality Improvement (QI) methodology in pre-service curricula and Continuing Medical Education (CME).",
+                    "Establish Clinical Governance and Quality Executive teams within hospitals.",
+                    "Transform the Health Development Army (HDA) into community-level QI Teams.",
+                    "Publish Patient Rights Charter and institute standardized patient feedback loops.",
+                    "Form Community Endorsement Groups to evaluate facility cleanliness, kindness, and respect."
+                ],
+                owners: "Human Resource Directorate, MSD, Professional Associations, Regional Health Bureaus"
+            },
+            3: {
+                title: "DRIVE: Link Quality with UHC & Financing",
+                border: "border-sky-400",
+                badge: "bg-sky-500/20 text-sky-300",
+                subtitle: "Leverage Universal Health Coverage expansion and insurance schemes as levers for quality.",
+                interventions: [
+                    "Tie health facility empanelment in Community-Based Health Insurance (CBHI) directly to quality checklist audits.",
+                    "Introduce transparent facility quality 'grades' to empower patient choices.",
+                    "Develop performance agreements between health facilities and Ethiopian Health Insurance Agency (EHIA).",
+                    "Allow facilities to retain local revenue specifically for funding internal QI projects.",
+                    "Apply Kaizen flow & lean principles to eliminate waiting times and reduce waste in outpatient departments."
+                ],
+                owners: "Ethiopian Health Insurance Agency (EHIA), MSD, FMoH Finance"
+            },
+            4: {
+                title: "SUPPORT: Data Systems & Feedback Loops",
+                border: "border-purple-400",
+                badge: "bg-purple-500/20 text-purple-300",
+                subtitle: "Establish a transparent data backbone to make data actionable across all administrative tiers.",
+                interventions: [
+                    "Develop real-time interactive quality dashboards across Federal, Regional, Zonal, and Woreda levels.",
+                    "Capacitate facilities to analyze local data (registers, chart audits) for immediate action.",
+                    "Establish two-way data feedback loops so front-line workers and HDA receive benchmarking feedback.",
+                    "Incorporate QI measurement principles directly into vertical public health programs.",
+                    "Utilize insurance claims analytics to detect quality and clinical safety anomalies."
+                ],
+                owners: "Policy Planning Directorate (HMIS Unit), EPHI, Core Quality Team"
+            }
+        };
+
+        /* ================= TAB NAVIGATION LOGIC ================= */
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Deactivate all nav pills
+            document.querySelectorAll('.glass-pill').forEach(el => el.classList.remove('active'));
+
+            // Show selected tab content
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+            }
+
+            // Activate corresponding button
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+
+            // Trigger specific tab initializations
+            if (tabId === 'focus-areas') {
+                selectPillar(1);
+            } else if (tabId === 'framework') {
+                renderIndicators(indicatorData);
+            }
+        }
+
+        /* ================= PILLAR SELECTOR LOGIC ================= */
+        function selectPillar(pillarId) {
+            // Update button styles
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`pillar-btn-${i}`);
+                if (i === pillarId) {
+                    btn.classList.remove('opacity-70');
+                    btn.classList.add('shadow-lg', 'scale-105');
+                } else {
+                    btn.classList.add('opacity-70');
+                    btn.classList.remove('shadow-lg', 'scale-105');
+                }
+            }
+
+            // Render detail
+            const data = pillarData[pillarId];
+            const container = document.getElementById('pillar-detail-container');
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-4">
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase ${data.badge}">Priority Pillar ${pillarId}</span>
+                        <h3 class="text-2xl font-black text-white mt-2">${data.title}</h3>
+                        <p class="text-xs text-gray-300 mt-1">${data.subtitle}</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-ethiopia-yellow"></i> Prioritized Interventions
+                    </h4>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-200">
+                        ${data.interventions.map(item => `
+                            <li class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
+                                <i class="fa-solid fa-circle-check text-ethiopia-green mt-0.5 text-sm"></i>
+                                <span class="leading-relaxed">${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <span class="text-gray-400"><strong>Primary Key Institutional Owners:</strong></span>
+                    <span class="text-ethiopia-yellow font-semibold">${data.owners}</span>
+                </div>
+            `;
+        }
+
+        /* ================= INDICATORS FILTER & SEARCH ================= */
+        let currentFilter = 'all';
+
+        function renderIndicators(items) {
+            const tbody = document.getElementById('indicator-table-body');
+            const countEl = document.getElementById('indicator-count');
+            
+            countEl.innerText = items.length;
+            tbody.innerHTML = '';
+
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">No indicators matching query.</td></tr>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                let codeBadge = 'bg-slate-700 text-gray-200';
+                if (item.code === 'A1') codeBadge = 'bg-ethiopia-green/20 text-ethiopia-yellow border border-ethiopia-green/40';
+                if (item.code === 'A2') codeBadge = 'bg-sky-500/20 text-sky-300 border border-sky-500/40';
+                if (item.code === 'B') codeBadge = 'bg-purple-500/20 text-purple-300 border border-purple-500/40';
+                if (item.code === 'C') codeBadge = 'bg-rose-500/20 text-rose-300 border border-rose-500/40';
+                if (item.code === 'Asp') codeBadge = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
+
+                tr.innerHTML = `
+                    <td><span class="px-2 py-0.5 rounded text-[10px] font-bold ${codeBadge}">${item.code}</span></td>
+                    <td class="font-semibold text-gray-200">${item.domain}</td>
+                    <td class="text-white">${item.name}</td>
+                    <td><span class="text-[11px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">${item.stage}</span></td>
+                    <td class="text-gray-400 font-mono text-[11px]">${item.source}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterIndicators(category) {
+            currentFilter = category;
+            
+            // Highlight active button
+            document.querySelectorAll('.ind-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-ethiopia-green', 'text-white');
+                btn.classList.add('bg-white/5', 'text-gray-300');
+            });
+            event.target.classList.add('bg-ethiopia-green', 'text-white');
+            event.target.classList.remove('bg-white/5', 'text-gray-300');
+
+            applyFilterAndSearch();
+        }
+
+        function searchIndicators() {
+            applyFilterAndSearch();
+        }
+
+        function applyFilterAndSearch() {
+            const query = document.getElementById('indicator-search').value.toLowerCase();
+            
+            const filtered = indicatorData.filter(item => {
+                const matchesCategory = (currentFilter === 'all') || (item.code === currentFilter);
+                const matchesQuery = item.name.toLowerCase().includes(query) || 
+                                     item.domain.toLowerCase().includes(query) || 
+                                     item.stage.toLowerCase().includes(query);
+                return matchesCategory && matchesQuery;
+            });
+
+            renderIndicators(filtered);
+        }
+
+        /* ================= THREE.JS BACKGROUND & WIDGET ================= */
+        function initThreeJS() {
+            // 1. Background Particle Field
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Create floating particle cloud
+            const geometry = new THREE.BufferGeometry();
+            const count = 350;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            const colorEthGreen = new THREE.Color('#009A44');
+            const colorEthYellow = new THREE.Color('#FED100');
+            const colorEthTeal = new THREE.Color('#00A896');
+
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+
+                const rand = Math.random();
+                let c = colorEthGreen;
+                if (rand > 0.6) c = colorEthYellow;
+                else if (rand > 0.3) c = colorEthTeal;
+
+                colors[i] = c.r;
+                colors[i + 1] = c.g;
+                colors[i + 2] = c.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.08,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+
+            camera.position.z = 8;
+
+            // Animation Loop
+            function animateBg() {
+                requestAnimationFrame(animateBg);
+                points.rotation.x += 0.0005;
+                points.rotation.y += 0.0008;
+                renderer.render(scene, camera);
+            }
+            animateBg();
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // 2. Interactive Widget in Hero
+            initHeroWidget();
+        }
+
+        function initHeroWidget() {
+            const widgetEl = document.getElementById('hero-3d-widget');
+            if (!widgetEl) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(50, widgetEl.clientWidth / widgetEl.clientHeight, 0.1, 100);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(widgetEl.clientWidth, widgetEl.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            widgetEl.appendChild(renderer.domElement);
+
+            // Create 3D Outer Wireframe Core (Icosahedron)
+            const geoOuter = new THREE.IcosahedronGeometry(1.6, 1);
+            const matOuter = new THREE.MeshBasicMaterial({
+                color: 0x009A44,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.4
+            });
+            const meshOuter = new THREE.Mesh(geoOuter, matOuter);
+            scene.add(meshOuter);
+
+            // Inner Glowing Sphere
+            const geoInner = new THREE.SphereGeometry(0.9, 16, 16);
+            const matInner = new THREE.MeshBasicMaterial({
+                color: 0xFED100,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            const meshInner = new THREE.Mesh(geoInner, matInner);
+            scene.add(meshInner);
+
+            camera.position.z = 4.5;
+
+            // Mouse rotation interaction
+            let isDragging = false;
+            let prevMouseX = 0;
+            let prevMouseY = 0;
+
+            widgetEl.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                prevMouseX = e.clientX;
+                prevMouseY = e.clientY;
+            });
+
+            window.addEventListener('mouseup', () => isDragging = false);
+
+            widgetEl.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - prevMouseX;
+                const deltaY = e.clientY - prevMouseY;
+                meshOuter.rotation.y += deltaX * 0.01;
+                meshOuter.rotation.x += deltaY * 0.01;
+                meshInner.rotation.y -= deltaX * 0.01;
+                prevMouseX = e.clientX;
+                prevMouseY = e.clientY;
+            });
+
+            function animateWidget() {
+                requestAnimationFrame(animateWidget);
+                if (!isDragging) {
+                    meshOuter.rotation.y += 0.005;
+                    meshOuter.rotation.x += 0.003;
+                    meshInner.rotation.y -= 0.007;
+                }
+                renderer.render(scene, camera);
+            }
+            animateWidget();
+        }
+
+        /* ================= CHART.JS IMPLEMENTATION ================= */
+        function initCharts() {
+            const ctx = document.getElementById('chart-u5-mortality').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1990', '1995', '2000', '2005', '2010', '2013 (MDG4 Target)', '2016 Baseline', '2020 Goal'],
+                    datasets: [{
+                        label: 'Under-5 Mortality Rate (per 1,000 live births)',
+                        data: [204, 168, 140, 123, 88, 68, 59, 30],
+                        borderColor: '#FED100',
+                        backgroundColor: 'rgba(254, 209, 0, 0.15)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#009A44',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e5e7eb', font: { family: 'Inter', size: 11 } }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af', font: { size: 10 } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        y: {
+                            ticks: { color: '#9ca3af', font: { size: 10 } },
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        /* ================= INITIALIZATION ON LOAD ================= */
+        window.onload = function() {
+            initThreeJS();
+            initCharts();
+            renderIndicators(indicatorData);
+        };
+    </script>
+</body>
+</html>
